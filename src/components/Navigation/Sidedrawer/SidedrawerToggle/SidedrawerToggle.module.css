@@ -1,0 +1,13 @@
+.bar {
+  width: 35px;
+  height: 3px;
+  background-color: white;
+  margin: 8px 0;
+  border-radius: 10px;
+}
+
+@media (min-width: 500px) {
+  .container {
+    display: none;
+  }
+}
