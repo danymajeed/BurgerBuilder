@@ -6,8 +6,9 @@ import classes from "./ContactData.module.css";
 import axios from "../../../axiosOrders";
 import Input from "../../../components/UI/Input/Input";
 import ErrorHandler from "../../../hoc/ErrorHandler/ErrorHandler";
-import * as orderActions from "../../../store/actions/index";
+import * as actions from "../../../store/actions/index";
 import { Redirect } from "react-router-dom";
+import checkValidity from "../../../shared/Functions/FormValidity";
 
 class ContactData extends Component {
   state = {
@@ -111,41 +112,11 @@ class ContactData extends Component {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice,
       orderData: formData,
+      userId: this.props.userId,
     };
-    // this.props.history.push("/");
-    this.props.placeOrder(order);
+    this.props.setIsBuilding();
+    this.props.placeOrder(order, this.props.idToken);
   };
-
-  checkValidity(value, rules) {
-    let isValid = true;
-    if (!rules) {
-      return true;
-    }
-
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-
-    if (rules.isEmail) {
-      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-      isValid = pattern.test(value) && isValid;
-    }
-
-    if (rules.isNumeric) {
-      const pattern = /^\d+$/;
-      isValid = pattern.test(value) && isValid;
-    }
-
-    return isValid;
-  }
 
   inputChangedHandler = (event, inputIdentifier) => {
     const updatedOrderForm = {
@@ -155,7 +126,7 @@ class ContactData extends Component {
       ...updatedOrderForm[inputIdentifier],
     };
     updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = this.checkValidity(
+    updatedFormElement.valid = checkValidity(
       updatedFormElement.value,
       updatedFormElement.validation
     );
@@ -219,12 +190,16 @@ const mapStateToProps = (state) => {
     totalPrice: state.burgerBuilder.totalPrice,
     loading: state.order.loading,
     purchased: state.order.purchased,
+    idToken: state.auth.idToken,
+    userId: state.auth.localId,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    placeOrder: (orderData) => dispatch(orderActions.purchaseBurger(orderData)),
+    placeOrder: (orderData, idToken) =>
+      dispatch(actions.purchaseBurger(orderData, idToken)),
+    setIsBuilding: () => dispatch(actions.setIsBuilding()),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ContactData);

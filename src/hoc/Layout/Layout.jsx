@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Toolbar from "../../components/Navigation/Toolbar/Toolbar";
 import Sidedrawer from "../../components/Navigation/Sidedrawer/Sidedrawer";
-
+import { connect } from "react-redux";
 class Layout extends Component {
   state = {
     showSidedrawer: false,
@@ -16,8 +16,12 @@ class Layout extends Component {
   render() {
     return (
       <React.Fragment>
-        <Toolbar showSidedrawer={this.sidedrawerHandler} />
+        <Toolbar
+          showSidedrawer={this.sidedrawerHandler}
+          isAuthenticated={this.props.isAuthenticated}
+        />
         <Sidedrawer
+          isAuthenticated={this.props.isAuthenticated}
           show={this.state.showSidedrawer}
           closeSidedrawer={this.sidedrawerHandler}
         />
@@ -27,4 +31,10 @@ class Layout extends Component {
   }
 }
 
-export default Layout;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.idToken !== null,
+  };
+};
+
+export default connect(mapStateToProps)(Layout);

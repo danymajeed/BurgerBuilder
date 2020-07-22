@@ -28,6 +28,12 @@ export const fetchIngredientsFailed = () => {
   };
 };
 
+export const setIsBuilding = () => {
+  return {
+    type: actionTypes.SET_IS_BUILDING,
+  };
+};
+
 export const initializeIngredients = () => {
   return (disptach) => {
     axiosInstance
